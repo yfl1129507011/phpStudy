@@ -9,7 +9,7 @@
 
 require 'sort.php';
 
-$list = [2,3,1,6,8,4,9,0,7,3,-1,5,10,0,5];
+$list = [2,3,1,6,8,4,9,0,7,3,-1,5,10,0,5,-3];
 
 var_dump($list);
 
@@ -23,6 +23,8 @@ var_dump($list);*/
 //$list = Sort::directInsert($list);  // 直接插入排序
 
 // 选择排序
-$list = Sort::selection($list);
+//$list = Sort::selection($list);
 
+// 快速排序
+$list = Sort::quick($list);
 var_dump($list);

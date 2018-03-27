@@ -18,9 +18,9 @@ class Sort {
      * 冒泡排序
      */
     static public function bubble(array $data){
-        if (!empty($data)) {
+        $len = count($data);
+        if ($len > 1) {
             $isSort = true;  //标识是否已经排好序
-            $len = count($data);
             while ($len--) {
                 for ($i = 0; $i < $len; $i++) {
                     if ($data[$i] > $data[$i + 1]) {
@@ -46,9 +46,8 @@ class Sort {
      */
     // 直接插入排序
     static public function directInsert(array $data){
-        if (!empty($data)){
-            $len = count($data);
-
+        $len = count($data);
+        if ($len > 1){
             for ($i=1; $i<$len; $i++){
                 $inx = $data[$i];  //要插入的数据
                 $j = $i;
@@ -68,8 +67,8 @@ class Sort {
 
     // 二分插入排序
     static public function binaryInsert(array $data){
-        if (!empty($data)){
-            $len = count($data);
+        $len = count($data);
+        if ($len > 1){
             for ($i=1; $i<$len; $i++){
                 $inx = $data[$i];
                 $low = 0;
@@ -101,8 +100,8 @@ class Sort {
      * 选择排序
      */
     static public function selection(array $data){
-        if (!empty($data)){
-            $len = count($data);
+        $len = count($data);
+        if ($len > 1){
             for ($i=0; $i<$len; $i++){
                 for ($j=$i+1; $j<$len; $j++){
                     if($data[$i] > $data[$j]){
@@ -114,4 +113,34 @@ class Sort {
 
         return $data;
     }
+
+
+    /**
+     * @param array $data
+     * @return array
+     *
+     * 快速排序
+     */
+    static public function quick(array $data){
+        $len = count($data);
+        if($len > 1){
+            $left = array();
+            $right = array();
+            $midKey = floor($len/2);
+            $midVal = $data[$midKey];unset($data[$midKey]);
+            foreach ($data as $v){
+                if($v < $midVal){
+                    array_push($left, $v);
+                }else{
+                    array_push($right, $v);
+                }
+            }
+
+            $data = array_merge(self::quick($left),(array)$midVal,self::quick($right));
+        }
+
+        return $data;
+    }
+
+
 }
