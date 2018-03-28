@@ -121,13 +121,13 @@ class Sort {
      *
      * 快速排序
      */
+    // 快速排序方式一 以增加辅助空间为代价
     static public function quick(array $data){
         $len = count($data);
         if($len > 1){
             $left = array();
             $right = array();
-            $midKey = floor($len/2);
-            $midVal = $data[$midKey];unset($data[$midKey]);
+            $midVal = $data[0];unset($data[0]);
             foreach ($data as $v){
                 if($v < $midVal){
                     array_push($left, $v);
@@ -142,5 +142,58 @@ class Sort {
         return $data;
     }
 
+    // 快速排序方式二  没有用到辅助空间递归方式
+    static public function quick_two(array &$data, $low=false, $high=false){
+        $len = count($data);
+        if($len > 1) {
+            if ($low === false) $low = 0;
+            if ($high === false) $high = $len-1;
+            if($low < $high) {
+                $tmp = self::quick_partition($data, $low, $high);
+                self::quick_two($data, $low, $tmp - 1);
+                self::quick_two($data, $tmp + 1, $high);
+            }
+        }
+    }
+
+    // 快速排序划分
+    static private function quick_partition(&$data, $low, $high){
+        $midVal = $data[$low];
+
+        while ($low < $high){
+            while ($low < $high && $data[$high] >= $midVal) $high--;
+            $data[$low] = $data[$high];
+            while ($low < $high && $data[$low] <= $midVal) $low++;
+            $data[$high] = $data[$low];
+        }
+
+        //$data[$high] = $midVal;
+        $data[$low] = $midVal;
+
+        return $low;
+    }
+
+
+    // 快速排序方式三  没有用到辅助空间堆栈方式
+    static public function quick_three(&$data){
+        $len = count($data);
+        $stack = array();
+        if($len > 1){
+            $tmp = self::quick_partition($data,0,$len-1);
+            array_push($stack, array(0,$tmp-1));
+            array_push($stack, array($tmp+1,$len-1));
+        }
+
+        while ($stack){
+            $node = array_pop($stack);
+            $tmp = self::quick_partition($data,$node[0],$node[1]);
+            if($node[0] < $tmp-1){
+                array_push($stack,array($node[0], $tmp-1));
+            }
+            if($tmp+1 < $node[1]){
+                array_push($stack,array($tmp+1, $node[1]));
+            }
+        }
+    }
 
 }

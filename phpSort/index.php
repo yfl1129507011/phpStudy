@@ -26,5 +26,7 @@ var_dump($list);*/
 //$list = Sort::selection($list);
 
 // 快速排序
-$list = Sort::quick($list);
+//$list = Sort::quick($list);
+//Sort::quick_two($list);
+Sort::quick_three($list);
 var_dump($list);
