@@ -47,6 +47,10 @@ class File {
      * @param $dest
      * 通过流式方式拷贝文件
      * @return bool
+     * php://stdin (只读)
+     * php://stderr (只写, 如php://stdout)
+     * php://input (只读) 这使我们能够访问原始请求体
+     * php://output (只写) 让我们写入输出缓冲区
      */
     static public function copyFile($source,$dest){
         if(is_file($source)){
