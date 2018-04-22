@@ -8,6 +8,7 @@
  * php排序算法
  *
  */
+namespace phpSort;
 
 class Sort {
 
