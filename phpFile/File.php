@@ -8,6 +8,33 @@
 namespace phpFile;
 
 class File {
+
+    static private $errorMsg = null;
+
+    static public function getError(){
+        return self::$errorMsg;
+    }
+
+    static public function writeFile($content, $filename){
+        if(file_exists($filename)){
+            if(!is_file($filename)){
+                self::$errorMsg = "$filename is not file";return false;
+            }
+            if(!is_writable($filename)){
+                self::$errorMsg = "$filename is not writable";return false;
+            }
+        }
+        /*if(!$handle = fopen($filename, 'a')){
+            self::$errorMsg = "$filename is not open";return false;
+        }
+        if(fwrite($handle, $content) === false){
+            self::$errorMsg = "$filename is not write";return false;
+        }
+        fclose($handle);*/
+        file_put_contents($filename, $content, FILE_APPEND);
+        return true;
+    }
+
     /**
      * @param $path  读取的文件路径
      * @return array
