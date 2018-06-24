@@ -7,6 +7,8 @@
  */
 namespace phpDb;
 
+echo print_r(array('a'=>1, 'b'=>2), true);die;
+
 $config = array(
     'hostname' => 'localhost',
     'username' => 'root',
