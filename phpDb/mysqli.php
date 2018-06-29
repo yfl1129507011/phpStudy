@@ -28,7 +28,6 @@ class Mysqli {
         if(mysqli_connect_error()){
             throw new \Exception(mysqli_connect_error());
         }
-
         // 设置数据库编码
         $dbCharset = isset($config['charset'])?$config['charset']:'utf8';
         $this->db->query("SET NAMES '".$dbCharset."'");
@@ -44,7 +43,7 @@ class Mysqli {
         $this->queryStr = $str;
         // 执行SQL语句
         $queryID = $this->db->query($str);
-        if(false === $queryID || $queryID->num_rows){
+        if(false === $queryID){
             return false;
         }else{
             $result = array();
