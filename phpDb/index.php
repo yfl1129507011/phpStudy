@@ -50,9 +50,10 @@ $stmt->execute();*/
 $stmt = $db->prepare("insert `users` (username, password) values (?, ?)");
 $stmt->bindParam(1, $name);
 $stmt->bindParam(2, $password);
-
 $name = 'one';
 $password = '123456';
+/*$stmt->bindValue(1,'three');
+$stmt->bindValue(2,'abcdefg');*/
 $stmt->execute();
 var_dump($db->lastInsertId());
 var_dump($stmt->rowCount());

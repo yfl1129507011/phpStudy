@@ -63,6 +63,51 @@ class Pdo {
     }
 
     public function query($str, $bind=array()){
+        if(!$this->db) return false;
+        $this->queryStr = $str;
+        if(!empty($bind)){
+            $that = $this;
+            $this->queryStr = strtr($this->queryStr,
+                array_map(function($val) use($that) {
+                    return '\''.$that->escapeString($val).'\'';
+                }, $bind)
+            );
+        }
+        $PDOStatement = $this->db->prepare($str);
+        if(false === $PDOStatement){
+            return false;
+        }
+        foreach($bind as $k=>$v){
+            if(is_array($v)){
+                $PDOStatement->bindValue($k, $v[0], $v[1]);
+            }else{
+                $PDOStatement->bindValue($k, $v);
+            }
+        }
+        try{
+            $result = $PDOStatement->execute();
+            if(false === $result){
+                $error = $PDOStatement->errorInfo();
+                throw new \Exception( $error[1].':'.$error[2]);
+                return false;
+            }else {
+                $result = $PDOStatement->fetchAll(\PDO::FETCH_ASSOC);
+                return $result;
+            }
+        }catch (\PDOException $e){
+            $e->errorInfo();
+            throw new \Exception( $error[1].':'.$error[2]);
+            return false;
+        }
+    }
 
+    /**
+     * SQL指令安全过滤
+     * @access public
+     * @param string $str  SQL字符串
+     * @return string
+     */
+    public function escapeString($str) {
+        return addslashes($str);
     }
 }
