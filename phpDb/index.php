@@ -14,6 +14,7 @@ $config = array(
     'database' => 'zhongmiao',
     'port' => '',
 );
+echo '[ '.print_r($config,true).' ]';die;
 /*include('mysqli.php');
 $mysql = new Mysqli($config);
 $res = $mysql->query("SELECT * FROM `zm_user_visit_log` LIMIT 5;");

@@ -14,8 +14,6 @@ class Pdo {
     private $queryStr   = '';
     // 最后插入ID
     private $lastInsID  = null;
-    // 事务状态
-    private $transStatus = false;
     private $error      = '';
 
     // PDO连接参数
@@ -62,6 +60,23 @@ class Pdo {
         $this->db->exec('SET NAMES UTF8');
     }
 
+    /**
+     * 执行查询 返回数据集
+     * @param $str
+     * @param array $bind
+     * @return array|bool
+     * @throws \Exception
+     *
+     * egg:
+     * $str =  "select `username`, `password` from `user` where `username`=:name and `password`=:password)"
+     * $str =  "insert into user (username, password) values (:name, :password)"
+     * $bind = array(
+     *      ':name' => 'fenlen',
+     *      ':password' => array('123456',\PDO::PARAM_STR),
+     * )
+     * query($str, $bind)
+     *
+     */
     public function query($str, $bind=array()){
         if(!$this->db) return false;
         $this->queryStr = $str;
@@ -78,6 +93,7 @@ class Pdo {
             return false;
         }
         foreach($bind as $k=>$v){
+            // 参数绑定
             if(is_array($v)){
                 $PDOStatement->bindValue($k, $v[0], $v[1]);
             }else{
@@ -88,16 +104,46 @@ class Pdo {
             $result = $PDOStatement->execute();
             if(false === $result){
                 $error = $PDOStatement->errorInfo();
-                throw new \Exception( $error[1].':'.$error[2]);
+                $this->error =  $error[1].':'.$error[2];
                 return false;
             }else {
+                // 返回所有结果
                 $result = $PDOStatement->fetchAll(\PDO::FETCH_ASSOC);
                 return $result;
             }
         }catch (\PDOException $e){
-            $e->errorInfo();
+            $error = $e->errorInfo();
+            $this->error =  $error[1].':'.$error[2];
             throw new \Exception( $error[1].':'.$error[2]);
             return false;
+        }
+    }
+
+    public function execute($str, $bind=array()){
+        if(!$this->db) return false;
+        $this->queryStr = $str;
+        $PDOStatement = $this->db->prepare($str);
+        if(false === $PDOStatement){
+            return false;
+        }
+        foreach($bind as $k=>$v){
+            // 参数绑定
+            if(is_array($v)){
+                $PDOStatement->bindValue($k, $v[0], $v[1]);
+            }else{
+                $PDOStatement->bindValue($k, $v);
+            }
+        }
+        $result = $PDOStatement->execute();
+        if(false === $result){
+            $error = $PDOStatement->errorInfo();
+            $this->error =  $error[1].':'.$error[2];
+            return false;
+        }else{
+            if(preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $str)) {
+                $this->lastInsID = $this->db->lastInsertId();
+            }
+            return $PDOStatement->rowCount();
         }
     }
 
